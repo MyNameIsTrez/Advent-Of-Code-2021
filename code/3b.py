@@ -1,10 +1,6 @@
 import utils
 
 
-def remove_newline(str):
-	return str.rstrip("\n")
-
-
 def count_bits(i, byte_strings, fn):
 	zeros = 0
 	ones = 0
@@ -43,9 +39,9 @@ def most_common_bit_fn(zeros, ones):
 
 
 if __name__ == "__main__":
-	data = utils.parse("3", remove_newline)
+	data = utils.parse("3", lambda line: line.strip())
 
-	bit_string_len = 12
+	bit_string_len = len(data[0])
 
 
 	oxygen_data = data.copy()
@@ -54,9 +50,7 @@ if __name__ == "__main__":
 		least_common_bit = count_bits(i, oxygen_data, least_common_bit_fn)
 		remove_bit_strings_with_bit(oxygen_data, least_common_bit if least_common_bit != "equal" else 0, i)
 		if len(oxygen_data) == 1:
-			oxygen_generator_rating = int(oxygen_data[0], 2)
-
-	print(oxygen_generator_rating)
+			break
 
 
 	co2_data = data.copy()
@@ -65,12 +59,10 @@ if __name__ == "__main__":
 		least_common_bit = count_bits(i, co2_data, most_common_bit_fn)
 		remove_bit_strings_with_bit(co2_data, least_common_bit if least_common_bit != "equal" else 1, i)
 		if len(co2_data) == 1:
-			co2_scrubber_rating = int(co2_data[0], 2)
-
-	print(co2_scrubber_rating)
+			break
 
 
-	print(oxygen_generator_rating * co2_scrubber_rating)
+	print(int(oxygen_data[0], 2) * int(co2_data[0], 2))
 
 
 # 4017424, 4259420

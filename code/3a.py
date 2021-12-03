@@ -1,10 +1,6 @@
 import utils
 
 
-def remove_newline(str):
-	return str.rstrip("\n")
-
-
 def get_most_common_bit(i, data):
 	zeros = 0
 	ones = 0
@@ -19,7 +15,7 @@ def get_most_common_bit(i, data):
 
 
 if __name__ == "__main__":
-	data = utils.parse("3", remove_newline)
+	data = utils.parse("3", lambda line: line.strip())
 
 	bit_string_len = 12
 
