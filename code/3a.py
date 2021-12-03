@@ -5,7 +5,7 @@ def remove_newline(str):
 	return str.rstrip("\n")
 
 
-def get_most_common_bit(i):
+def get_most_common_bit(i, data):
 	zeros = 0
 	ones = 0
 
@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
 	gamma = 0
 	for i in range(bit_string_len):
-		gamma = (gamma << 1) | get_most_common_bit(i) # Push a bit on the right
+		gamma = (gamma << 1) | get_most_common_bit(i, data) # Push a bit on the right
 
 	mask = 2 ** bit_string_len - 1 # For a bit_string_len of 5 this'd be 0b11111
 	epsilon = gamma ^ mask # Invert bits
