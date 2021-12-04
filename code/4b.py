@@ -58,13 +58,23 @@ def get_board_sum(board):
 def main():
 	drawn, boards = parse()
 
+	# print(drawn, boards)
+
+	bingo_board_indices = []
+	final_bingo_nums = []
+
 	for draw_num in drawn:
-		for board in boards:
+		for i, board in enumerate(boards):
+			if i in bingo_board_indices:
+				continue
+
 			draw(draw_num, board)
 
-			if check_bingo(board):
-				print(get_board_sum(board) * draw_num)
-				return
+			if i not in bingo_board_indices and check_bingo(board):
+				bingo_board_indices.append(i)
+				final_bingo_nums.append(draw_num)
+
+	print(get_board_sum(boards[bingo_board_indices.pop()]) * final_bingo_nums.pop())
 
 
 if __name__ == "__main__":
