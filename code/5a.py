@@ -19,7 +19,7 @@ def remove_diagonals(data):
 			del data[i] # del can't be called on "pair" directly
 
 
-def normalize(diff):
+def get_step(diff):
     if diff > 0:
         return 1
     return 0 if diff == 0 else -1
@@ -32,8 +32,8 @@ def get_pair_points(pair):
 
 	x_diff, y_diff = to_x - fro_x, to_y - fro_y
 
-	x_step = normalize(x_diff)
-	y_step = normalize(y_diff)
+	x_step = get_step(x_diff)
+	y_step = get_step(y_diff)
 
 	x, y = fro_x, fro_y
 

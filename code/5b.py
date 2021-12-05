@@ -9,7 +9,7 @@ def parse(line):
 	return {"from": {"x": int(fro_x), "y": int(fro_y)}, "to": {"x": int(to_x), "y": int(to_y)}}
 
 
-def normalize(diff):
+def get_step(diff):
     if diff > 0:
         return 1
     return 0 if diff == 0 else -1
@@ -22,8 +22,8 @@ def get_pair_points(pair):
 
 	x_diff, y_diff = to_x - fro_x, to_y - fro_y
 
-	x_step = normalize(x_diff)
-	y_step = normalize(y_diff)
+	x_step = get_step(x_diff)
+	y_step = get_step(y_diff)
 
 	x, y = fro_x, fro_y
 
