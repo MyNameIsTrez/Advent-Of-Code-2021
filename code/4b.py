@@ -58,14 +58,12 @@ def get_board_sum(board):
 def main():
 	drawn, boards = parse()
 
-	# print(drawn, boards)
-
 	bingo_board_indices = []
 	final_bingo_nums = []
 
 	for draw_num in drawn:
 		for i, board in enumerate(boards):
-			if i in bingo_board_indices:
+			if i in bingo_board_indices: # get_board_sum requires no more None values to be placed on bingo boards
 				continue
 
 			draw(draw_num, board)

@@ -17,7 +17,7 @@ def count_bits(i, byte_strings, fn):
 def remove_bit_strings_with_bit(lst, remove_bit, bit_index):
 	for string_index, string in reversed(list(enumerate(lst))):
 		if int(string[bit_index]) == remove_bit:
-			del lst[string_index]
+			del lst[string_index] # del can't be called on "string" directly
 
 
 def least_common_bit_fn(zeros, ones):
