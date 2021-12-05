@@ -20,11 +20,9 @@ def remove_diagonals(data):
 
 
 def normalize(diff):
-	if diff > 0:
-		return 1
-	if diff == 0:
-		return 0
-	return -1
+    if diff > 0:
+        return 1
+    return 0 if diff == 0 else -1
 
 
 def get_pair_points(pair):
@@ -37,10 +35,6 @@ def get_pair_points(pair):
 	x_step = normalize(x_diff)
 	y_step = normalize(y_diff)
 
-	# print(x_diff, y_diff)
-	# print(fro_x, to_x, fro_y, to_y)
-	# print(x_step, y_step)
-
 	x, y = fro_x, fro_y
 
 	while not (x == to_x and y == to_y):
@@ -49,7 +43,7 @@ def get_pair_points(pair):
 		x += x_step
 		y += y_step
 
-	yield x, y # Includes the "to" coord
+	yield x, y # This yield makes sure the "to" coord is included
 
 
 def parse_coords(data):

@@ -10,11 +10,9 @@ def parse(line):
 
 
 def normalize(diff):
-	if diff > 0:
-		return 1
-	if diff == 0:
-		return 0
-	return -1
+    if diff > 0:
+        return 1
+    return 0 if diff == 0 else -1
 
 
 def get_pair_points(pair):
