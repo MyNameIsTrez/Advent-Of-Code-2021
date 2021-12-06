@@ -63,6 +63,3 @@ if __name__ == "__main__":
 
 
 	print(int(oxygen_data[0], 2) * int(co2_data[0], 2))
-
-
-# 4017424, 4259420
