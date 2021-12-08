@@ -2,7 +2,7 @@ import utils
 
 
 def parse(line):
-	return line.strip().split(" | ")[1]
+	return line[:-1].split(" | ")[1]
 
 
 def count_unique(line):
