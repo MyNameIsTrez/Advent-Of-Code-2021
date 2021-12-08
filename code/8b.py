@@ -2,32 +2,77 @@ import utils
 
 
 def parse(line):
-	return line.strip().split(" | ")[1]
+	return list(map(lambda x : "".join(sorted(x)), line[:-1].split(" | ")[0].split(" ")))
 
 
-def get_easy_mappings(data):
-	unique_mappings = {
-		2: 1,
-		3: 7,
-		4: 4,
-		7: 8
+def get_easy_mappings(line):
+	mappings = {
+		2: None, # digit 1
+		4: None, # digit 4
+		3: None, # digit 7
+		7: None  # digit 8
 	}
 
-	mappings = [None] * 10 # So digit strings can be inserted in any order
 	unsorted = []
 
-	total_count = 0
-	for line in data:
-		for segment in line.split(" "):
-			l = len(segment)
+	for segments in line:
+		l = len(segments)
 
-			# Note that adding a check for mappings[l] == None wouldn't work, as it'd fill up the list "unsorted" with known segments.
-			if l in unique_mappings:
-				mappings[unique_mappings[l]] = segment
-			else:
-				unsorted.append(segment)
+		if l in mappings:
+			mappings[l] = segments
+		else:
+			unsorted.append(segments)
 
 	return mappings, unsorted
+
+
+"""
+ AAAA
+B    C
+B    C
+ DDDD
+E    F
+E    F
+ GGGG
+"""
+def foo(mappings):
+	bar = {
+		'A': [],
+		'B': [],
+		'C': [],
+		'D': [],
+		'E': [],
+		'F': [],
+		'G': []
+	}
+
+	segment_letters = {
+		0: "ABCEFG",
+		1: "CF",
+		2: "ACDEG",
+		3: "ACDFG",
+		4: "BCDF",
+		5: "ABDFG",
+		6: "ABDEFG",
+		7: "ACF",
+		8: "ABCDEFG",
+		9: "ABCDFG"
+	}
+
+	for segment_count, segments in mappings.items():
+		for segment_letter in segment_letters[segment_count]:
+			for segment in segments:
+				if segment not in bar[segment_letter]:
+					bar[segment_letter].append(segment)
+
+	for v in bar.values():
+		v.sort()
+
+	# for v in bar.values():
+	# 	for c in "abcdefg":
+	# 		v.append(c)
+
+	print(bar)
 
 
 if __name__ == "__main__":
@@ -35,7 +80,11 @@ if __name__ == "__main__":
 
 	# print(data)
 
-	mappings, unsorted = get_easy_mappings(data)
+	for line in data:
+		mappings, unsorted = get_easy_mappings(line)
 
-	print(mappings)
-	print(unsorted)
+		foo(mappings)
+
+		print(mappings)
+		break
+		# print(unsorted)
