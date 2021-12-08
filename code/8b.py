@@ -87,8 +87,25 @@ def get_potential_segment_letters_from_unique(unique_segments_list):
 	return segment_letter_pair_potential_segment_letters
 
 
-def add_potential_segment_letters_from_non_unique(potential_segment_letters, non_unique_segments_list):
+def remove_non_unique(potential_segment_letters, non_unique_segments_list):
 	pass
+	# remove_069(potential_segment_letters, non_unique_segments_list)
+	# remove_235(potential_segment_letters, non_unique_segments_list)
+
+
+def remove_069(potential_segment_letters, non_unique_segments_list):
+	segments_list_069 = filter_on_string_len(non_unique_segments_list, 6)
+
+	for i in range():
+		for c in non_unique_segments:
+			pass
+
+def remove_235(potential_segment_letters, non_unique_segments_list):
+	segments_list_235 = filter_on_string_len(non_unique_segments_list, 5)
+
+
+def filter_on_string_len(lst, length):
+	return list(filter(lambda x : len(x) == length, lst))
 
 
 if __name__ == "__main__":
@@ -104,7 +121,8 @@ if __name__ == "__main__":
 		potential_segment_letters = get_potential_segment_letters_from_unique(unique_segments_list)
 		# print(potential_segment_letters)
 
-		add_potential_segment_letters_from_non_unique(potential_segment_letters, non_unique_segments_list)
+		remove_non_unique(potential_segment_letters, non_unique_segments_list)
+
 		print(potential_segment_letters)
 		print(non_unique_segments_list)
 
