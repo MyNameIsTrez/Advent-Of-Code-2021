@@ -6,24 +6,24 @@ def parse(line):
 
 
 def get_easy_mappings(line):
-	mappings = {
+	segment_count_pair_mixed_segments = {
 		2: None, # digit 1
 		4: None, # digit 4
 		3: None, # digit 7
 		7: None  # digit 8
 	}
 
-	unsorted = []
+	unsorted_mixed_segments = []
 
 	for segments in line:
 		l = len(segments)
 
-		if l in mappings:
-			mappings[l] = segments
+		if l in segment_count_pair_mixed_segments:
+			segment_count_pair_mixed_segments[l] = segments
 		else:
-			unsorted.append(segments)
+			unsorted_mixed_segments.append(segments)
 
-	return mappings, unsorted
+	return segment_count_pair_mixed_segments, unsorted_mixed_segments
 
 
 """
@@ -35,8 +35,8 @@ E    F
 E    F
  GGGG
 """
-def foo(mappings):
-	bar = {
+def foo(segment_count_pair_mixed_segments):
+	segment_letter_pair_potential_segment_letters = {
 		'A': [],
 		'B': [],
 		'C': [],
@@ -46,7 +46,7 @@ def foo(mappings):
 		'G': []
 	}
 
-	segment_letters = {
+	segment_count_pair_digit_segment_letters = {
 		0: "ABCEFG",
 		1: "CF",
 		2: "ACDEG",
@@ -59,20 +59,20 @@ def foo(mappings):
 		9: "ABCDFG"
 	}
 
-	for segment_count, segments in mappings.items():
-		for segment_letter in segment_letters[segment_count]:
+	for segment_count, segments in segment_count_pair_mixed_segments.items():
+		for digit_segment_letter in segment_count_pair_digit_segment_letters[segment_count]:
 			for segment in segments:
-				if segment not in bar[segment_letter]:
-					bar[segment_letter].append(segment)
+				if segment not in segment_letter_pair_potential_segment_letters[digit_segment_letter]:
+					segment_letter_pair_potential_segment_letters[digit_segment_letter].append(segment)
 
-	for v in bar.values():
-		v.sort()
+	for potential_segment_letters in segment_letter_pair_potential_segment_letters.values():
+		potential_segment_letters.sort()
 
-	# for v in bar.values():
+	# for potential_segment_letters in segment_letter_pair_potential_segment_letters.values():
 	# 	for c in "abcdefg":
-	# 		v.append(c)
+	# 		potential_segment_letters.append(c)
 
-	print(bar)
+	print(segment_letter_pair_potential_segment_letters)
 
 
 if __name__ == "__main__":
@@ -81,10 +81,10 @@ if __name__ == "__main__":
 	# print(data)
 
 	for line in data:
-		mappings, unsorted = get_easy_mappings(line)
+		segment_count_pair_mixed_segments, unsorted_mixed_segments = get_easy_mappings(line)
 
-		foo(mappings)
+		# foo(segment_count_pair_mixed_segments)
 
-		print(mappings)
+		print(segment_count_pair_mixed_segments)
 		break
-		# print(unsorted)
+		# print(unsorted_mixed_segments)
