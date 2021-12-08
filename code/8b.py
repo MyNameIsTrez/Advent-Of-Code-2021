@@ -251,8 +251,7 @@ def main():
 
 		filter_using_non_unique(potential_segment_letters, non_unique_segments_list)
 
-		# TODO: May not always work?
-		potential_segment_letters["A"].remove(potential_segment_letters["G"][0])
+		potential_segment_letters["A"].remove(potential_segment_letters["G"][0]) # G always contains one segment letter in its list.
 
 		remap_output_digits(output_segments_list, potential_segment_letters)
 
