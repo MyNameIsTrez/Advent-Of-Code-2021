@@ -1,8 +1,33 @@
 import utils
 
 
+"""
+ AAAA
+B    C
+B    C
+ DDDD
+E    F
+E    F
+ GGGG
+"""
+DIGIT_PAIR_DIGIT_SEGMENT_LETTERS = {
+	0: "ABCEFG",
+	1: "CF",      # unique
+	2: "ACDEG",
+	3: "ACDFG",
+	4: "BCDF",    # unique
+	5: "ABDFG",
+	6: "ABDEFG",
+	7: "ACF",     # unique
+	8: "ABCDEFG", # unique
+	9: "ABCDFG"
+}
+
+DIGIT_SEGMENT_LETTERS_PAIR_DIGIT = { v: k for k, v in DIGIT_PAIR_DIGIT_SEGMENT_LETTERS.items() }
+
+
 def split_on_spaces_and_sort(string):
-	return list(map(lambda x : "".join(sorted(x)), string.split(" ")))
+	return list(map(lambda unsorted_segments : "".join(sorted(unsorted_segments)), string.split(" ")))
 
 
 def parse(line):
@@ -52,27 +77,12 @@ def unique_segments_len_pair_digit(unique_segments_len):
 		4: 4,
 		7: 8
 	}
+
 	return unique_segments_len_pair_digit[unique_segments_len]
 
 
-def digit_to_digit_segment_letters(digit):
-	digit_pair_digit_segment_letters = {
-		0: "ABCEFG",
-		1: "CF",      # unique
-		2: "ACDEG",
-		3: "ACDFG",
-		4: "BCDF",    # unique
-		5: "ABDFG",
-		6: "ABDEFG",
-		7: "ACF",     # unique
-		8: "ABCDEFG", # unique
-		9: "ABCDFG"
-	}
-	return digit_pair_digit_segment_letters[digit]
-
-
 def remove_non_unique_segments_from_potential_segment_letters(digit_segment_letters, segment_letter_pair_potential_segment_letters, unique_segments):
-	# TODO: Don't attempt to remove 8 as its letters are everywhere?
+	# TODO: Don't bother to look at 8 as its letters are everywhere?
 	for letter in "ABCDEFG":
 		if letter not in digit_segment_letters:
 			potential_segment_letters = segment_letter_pair_potential_segment_letters[letter]
@@ -82,15 +92,6 @@ def remove_non_unique_segments_from_potential_segment_letters(digit_segment_lett
 					potential_segment_letters.remove(potential_segment_letter)
 
 
-"""
- AAAA
-B    C
-B    C
- DDDD
-E    F
-E    F
- GGGG
-"""
 def get_potential_segment_letters_from_unique(unique_segments_list):
 	segment_letter_pair_potential_segment_letters = init_segment_letter_pair_potential_segment_letters()
 
@@ -99,11 +100,9 @@ def get_potential_segment_letters_from_unique(unique_segments_list):
 
 		digit = unique_segments_len_pair_digit(unique_segments_len)
 
-		digit_segment_letters = digit_to_digit_segment_letters(digit)
+		digit_segment_letters = DIGIT_PAIR_DIGIT_SEGMENT_LETTERS[digit]
 
 		remove_non_unique_segments_from_potential_segment_letters(digit_segment_letters, segment_letter_pair_potential_segment_letters, unique_segments)
-
-		# print(unique_segments, digit, digit_segment_letters, segment_letter_pair_potential_segment_letters, "\n")
 
 	return segment_letter_pair_potential_segment_letters
 
@@ -127,16 +126,12 @@ def filter_069(potential_segment_letters, non_unique_segments_list):
 	len_069 = 6
 	segments_list_069 = filter_on_string_len(non_unique_segments_list, len_069)
 
-	# print(segments_list_069)
-
 	for c in "abcdefg":
 		count = 0
 
 		for segment_069 in segments_list_069:
 			if c in segment_069:
 				count += 1
-
-		# print(count)
 
 		if count == 3: # c is either A / B / F / G, so remove c from C, D, E
 			if c in potential_segment_letters["C"]:
@@ -171,16 +166,12 @@ def filter_235(potential_segment_letters, non_unique_segments_list):
 	len_235 = 5
 	segments_list_235 = filter_on_string_len(non_unique_segments_list, len_235)
 
-	# print(segments_list_235)
-
 	for c in "abcdefg":
 		count = 0
 
 		for segment_235 in segments_list_235:
 			if c in segment_235:
 				count += 1
-
-		# print(count)
 
 		if count == 3: # c is either A / D / G, so remove c from B, C, E, F
 			if c in potential_segment_letters["B"]:
@@ -231,32 +222,25 @@ def remap_output_digits(output_segments_list, potential_segment_letters):
 			output_segments_list[i] = sort(output_segments_list[i].replace(before[0], after))
 
 
+"""
+ AAAA
+B    C
+B    C
+ DDDD
+E    F
+E    F
+ GGGG
+"""
 def map_output_letters_to_digits(output_segments_list):
-	letters_pair_digits = {
-		"ABCEFG": 0,
-		"CF": 1,
-		"ACDEG": 2,
-		"ACDFG": 3,
-		"BCDF": 4,
-		"ABDFG": 5,
-		"ABDEFG": 6,
-		"ACF": 7,
-		"ABCDEFG": 8,
-		"ABCDFG": 9
-	}
-
-	return [letters_pair_digits[output_segments] for output_segments in output_segments_list]
+	return [str(DIGIT_SEGMENT_LETTERS_PAIR_DIGIT[output_segments]) for output_segments in output_segments_list]
 
 
 def digits_to_num(digits):
-	num = 0
-	for digit in digits:
-		num = num * 10 + digit
-	return num
+	return int("".join(digits))
 
 
 def main():
-	lines_input_output = utils.parse("8", parse) # TODO: Change to "8"
+	lines_input_output = utils.parse("8", parse)
 
 	total = 0
 
@@ -274,8 +258,7 @@ def main():
 
 		digits = map_output_letters_to_digits(output_segments_list)
 
-		num = digits_to_num(digits)
-		total += num
+		total += digits_to_num(digits)
 
 	print(total)
 
