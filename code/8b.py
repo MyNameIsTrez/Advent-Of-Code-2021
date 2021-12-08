@@ -1,19 +1,24 @@
 import utils
 
 
+def split_on_spaces_and_sort(string):
+	return list(map(lambda x : "".join(sorted(x)), string.split(" ")))
+
+
 def parse(line):
-	return list(map(lambda x : "".join(sorted(x)), line[:-1].split(" | ")[0].split(" ")))
+	input, output = line[:-1].split(" | ")
+	return split_on_spaces_and_sort(input), split_on_spaces_and_sort(output)
 
 
 def is_unique(mixed_segments):
 	return len(mixed_segments) in (2, 3, 4, 7) # The digits 1, 7, 4, 8, in this order
 
 
-def get_sorted_segments():
+def get_sorted_segments(mixed_input_segments_list):
 	unique_segments_list = []
 	non_unique_segments_list = []
 
-	for mixed_segments in mixed_segments_list:
+	for mixed_segments in mixed_input_segments_list:
 		if is_unique(mixed_segments):
 			unique_segments_list.append(mixed_segments)
 		else:
@@ -87,7 +92,7 @@ def get_potential_segment_letters_from_unique(unique_segments_list):
 	return segment_letter_pair_potential_segment_letters
 
 
-def filter_non_unique(potential_segment_letters, non_unique_segments_list):
+def filter_using_non_unique(potential_segment_letters, non_unique_segments_list):
 	filter_069(potential_segment_letters, non_unique_segments_list)
 	filter_235(potential_segment_letters, non_unique_segments_list)
 
@@ -150,7 +155,7 @@ def filter_235(potential_segment_letters, non_unique_segments_list):
 	len_235 = 5
 	segments_list_235 = filter_on_string_len(non_unique_segments_list, len_235)
 
-	print(segments_list_235)
+	# print(segments_list_235)
 
 	for c in "abcdefg":
 		count = 0
@@ -200,26 +205,64 @@ def filter_on_string_len(lst, length):
 	return list(filter(lambda x : len(x) == length, lst))
 
 
-if __name__ == "__main__":
-	data = utils.parse("8_example", parse)
+def sort(string):
+	return "".join(sorted(string))
 
-	# print(data)
 
-	for mixed_segments_list in data:
-		# print(mixed_segments_list)
+def remap_output_digits(output_segments_list, potential_segment_letters):
+	for i in range(len(output_segments_list)):
+		for after, before in potential_segment_letters.items():
+			output_segments_list[i] = sort(output_segments_list[i].replace(before[0], after))
 
-		unique_segments_list, non_unique_segments_list = get_sorted_segments()
 
-		# print(non_unique_segments_list)
+def map_output_letters_to_digits(output_segments_list):
+	letters_pair_digits = {
+		"ABCEFG": 0,
+		"CF": 1,
+		"ACDEG": 2,
+		"ACDFG": 3,
+		"BCDF": 4,
+		"ABDFG": 5,
+		"ABDEFG": 6,
+		"ACF": 7,
+		"ABCDEFG": 8,
+		"ABCDFG": 9
+	}
+
+	return [letters_pair_digits[output_segments] for output_segments in output_segments_list]
+
+
+def digits_to_num(digits):
+	num = 0
+	for digit in digits:
+		num = num * 10 + digit
+	return num
+
+
+def main():
+	lines_input_output = utils.parse("8", parse) # TODO: Change to "8"
+
+	total = 0
+
+	for mixed_input_segments_list, output_segments_list in lines_input_output:
+		unique_segments_list, non_unique_segments_list = get_sorted_segments(mixed_input_segments_list)
 
 		potential_segment_letters = get_potential_segment_letters_from_unique(unique_segments_list)
-		# print(potential_segment_letters)
 
-		print(potential_segment_letters)
+		filter_using_non_unique(potential_segment_letters, non_unique_segments_list)
 
-		filter_non_unique(potential_segment_letters, non_unique_segments_list)
+		# TODO: May not always work?
+		potential_segment_letters["A"].remove(potential_segment_letters["G"][0])
 
-		print(potential_segment_letters)
+		remap_output_digits(output_segments_list, potential_segment_letters)
 
-		break
-		# print(unsorted_mixed_segments)
+		digits = map_output_letters_to_digits(output_segments_list)
+
+		num = digits_to_num(digits)
+		total += num
+
+	print(total)
+
+
+if __name__ == "__main__":
+	main()
