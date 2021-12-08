@@ -5,25 +5,21 @@ def parse(line):
 	return list(map(lambda x : "".join(sorted(x)), line[:-1].split(" | ")[0].split(" ")))
 
 
-def get_easy_mappings(line):
-	segment_count_pair_mixed_segments = {
-		2: None, # digit 1
-		4: None, # digit 4
-		3: None, # digit 7
-		7: None  # digit 8
-	}
+def is_unique(mixed_segments):
+	return len(mixed_segments) in (2, 3, 4, 7) # The digits 1, 7, 4, 8, in this order
 
-	unsorted_mixed_segments = []
 
-	for segments in line:
-		l = len(segments)
+def get_sorted_segments():
+	unique_segments_list = []
+	non_unique_segments_list = []
 
-		if l in segment_count_pair_mixed_segments:
-			segment_count_pair_mixed_segments[l] = segments
+	for mixed_segments in mixed_segments_list:
+		if is_unique(mixed_segments):
+			unique_segments_list.append(mixed_segments)
 		else:
-			unsorted_mixed_segments.append(segments)
+			non_unique_segments_list.append(mixed_segments)
 
-	return segment_count_pair_mixed_segments, unsorted_mixed_segments
+	return unique_segments_list, non_unique_segments_list
 
 
 """
@@ -35,7 +31,27 @@ E    F
 E    F
  GGGG
 """
-def foo(segment_count_pair_mixed_segments):
+def get_potential_segment_letters_from_unique(unique_segments_list):
+	unique_segments_len_pair_digit = {
+		2: 1,
+		3: 7,
+		4: 4,
+		7: 8
+	}
+
+	digit_pair_digit_segment_letters = {
+		0: "ABCEFG",
+		1: "CF",      # unique
+		2: "ACDEG",
+		3: "ACDFG",
+		4: "BCDF",    # unique
+		5: "ABDFG",
+		6: "ABDEFG",
+		7: "ACF",     # unique
+		8: "ABCDEFG", # unique
+		9: "ABCDFG"
+	}
+
 	segment_letter_pair_potential_segment_letters = {
 		'A': [],
 		'B': [],
@@ -46,33 +62,33 @@ def foo(segment_count_pair_mixed_segments):
 		'G': []
 	}
 
-	segment_count_pair_digit_segment_letters = {
-		0: "ABCEFG",
-		1: "CF",
-		2: "ACDEG",
-		3: "ACDFG",
-		4: "BCDF",
-		5: "ABDFG",
-		6: "ABDEFG",
-		7: "ACF",
-		8: "ABCDEFG",
-		9: "ABCDFG"
-	}
-
-	for segment_count, segments in segment_count_pair_mixed_segments.items():
-		for digit_segment_letter in segment_count_pair_digit_segment_letters[segment_count]:
-			for segment in segments:
-				if segment not in segment_letter_pair_potential_segment_letters[digit_segment_letter]:
-					segment_letter_pair_potential_segment_letters[digit_segment_letter].append(segment)
-
 	for potential_segment_letters in segment_letter_pair_potential_segment_letters.values():
-		potential_segment_letters.sort()
+		for c in "abcdefg":
+			potential_segment_letters.append(c)
 
-	# for potential_segment_letters in segment_letter_pair_potential_segment_letters.values():
-	# 	for c in "abcdefg":
-	# 		potential_segment_letters.append(c)
+	for unique_segments in unique_segments_list:
+		unique_segments_len = len(unique_segments)
 
-	print(segment_letter_pair_potential_segment_letters)
+		digit = unique_segments_len_pair_digit[unique_segments_len]
+
+		digit_segment_letters = digit_pair_digit_segment_letters[digit]
+
+		# TODO: Don't attempt to remove 8 as its letters are everywhere?
+		for letter in "ABCDEFG":
+			if letter not in digit_segment_letters:
+				potential_segment_letters = segment_letter_pair_potential_segment_letters[letter]
+
+				for potential_segment_letter in unique_segments:
+					if potential_segment_letter in potential_segment_letters:
+						potential_segment_letters.remove(potential_segment_letter)
+
+		# print(unique_segments, digit, digit_segment_letters, segment_letter_pair_potential_segment_letters, "\n")
+
+	return segment_letter_pair_potential_segment_letters
+
+
+def add_potential_segment_letters_from_non_unique(potential_segment_letters, non_unique_segments_list):
+	pass
 
 
 if __name__ == "__main__":
@@ -80,11 +96,17 @@ if __name__ == "__main__":
 
 	# print(data)
 
-	for line in data:
-		segment_count_pair_mixed_segments, unsorted_mixed_segments = get_easy_mappings(line)
+	for mixed_segments_list in data:
+		# print(mixed_segments_list)
 
-		# foo(segment_count_pair_mixed_segments)
+		unique_segments_list, non_unique_segments_list = get_sorted_segments()
 
-		print(segment_count_pair_mixed_segments)
+		potential_segment_letters = get_potential_segment_letters_from_unique(unique_segments_list)
+		# print(potential_segment_letters)
+
+		add_potential_segment_letters_from_non_unique(potential_segment_letters, non_unique_segments_list)
+		print(potential_segment_letters)
+		print(non_unique_segments_list)
+
 		break
 		# print(unsorted_mixed_segments)
