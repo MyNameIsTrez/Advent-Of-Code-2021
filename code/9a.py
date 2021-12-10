@@ -7,7 +7,7 @@ def main():
 	width = len(data[0])
 	height = len(data)
 
-	print(data)
+	# print(data)
 
 	sum = 0
 
