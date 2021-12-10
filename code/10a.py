@@ -4,8 +4,6 @@ import utils
 def main():
 	data = utils.parse("10", parse)
 
-	# print(data)
-
 	pairs = {
 		"(": ")",
 		"[": "]",
