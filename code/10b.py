@@ -4,7 +4,7 @@ import utils
 def main():
 	data = utils.parse("10", parse)
 
-	incomplete = list(filter(is_incomplete, data))
+	incomplete = filter(is_incomplete, data)
 
 	scores = []
 
