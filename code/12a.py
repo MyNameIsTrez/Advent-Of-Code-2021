@@ -1,11 +1,11 @@
-import utils, copy
+import utils
 
 from collections import defaultdict
-from collections import deque
+import copy
 
 
 def main():
-	data = utils.parse("12_example_2", parse)
+	data = utils.parse("12", parse)
 
 	# print(data)
 
@@ -27,42 +27,42 @@ def get_connections(data):
 	connections = defaultdict(list)
 
 	for fro, to in data:
-		connections[fro].append(to)
-		if fro != "start" and to != "end": # Prevents retreading the start or end
+		if fro != "end" and to != "start": # Prevents retreading the start or end
+			connections[fro].append(to)
+		if to != "end" and fro != "start": # Prevents retreading the start or end
 			connections[to].append(fro)
 
 	return dict(connections)
 
 
-def solve(connections):
+def solve(connections, node="start", visited_small_caves=[], path=["start"]):
 	global PATH_COUNT
 
-	stack = deque([ ["start", [], []] ])
+	for node_parent in connections[node]:
+		if is_small_cave(node_parent) and node_parent in visited_small_caves:
+			continue
 
-	# print(node)
+		path.append(node_parent)
 
-	while len(stack) > 0:
-		node, visited_small_caves, path = stack.pop()
-
-		if is_small_cave(node):
-			if node in visited_small_caves:
-				continue
-
-			visited_small_caves.append(node)
-
-		path.append(node)
-
-		if node == "end":
+		if node_parent == "end":
 			print(",".join(path))
+			path.pop()
 			PATH_COUNT += 1
 			continue
 
-		for node_parent in connections[node]:
-			stack.append([node_parent, copy.copy(visited_small_caves), copy.copy(path)])
+		if is_small_cave(node_parent):
+			visited_small_caves.append(node_parent)
+
+		solve(connections, node_parent, visited_small_caves, path)
+
+		if is_small_cave(node_parent):
+			visited_small_caves.pop()
+
+		path.pop()
 
 
 def is_small_cave(node):
-	return len(node) == 1 and node.islower()
+	return node.islower() and node not in ("start", "end")
 
 
 if __name__ == "__main__":
