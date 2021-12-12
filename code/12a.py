@@ -26,10 +26,11 @@ def parse(line):
 def get_connections(data):
 	connections = defaultdict(list)
 
+	# The conditions prevent retreading the start or the end
 	for fro, to in data:
-		if fro != "end" and to != "start": # Prevents retreading the start or end
+		if fro != "end" and to != "start":
 			connections[fro].append(to)
-		if to != "end" and fro != "start": # Prevents retreading the start or end
+		if to != "end" and fro != "start":
 			connections[to].append(fro)
 
 	return dict(connections)
