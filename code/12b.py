@@ -1,7 +1,6 @@
-import utils
+import utils, copy
 
-from collections import defaultdict
-import copy
+from collections import defaultdict, deque
 
 
 def main():
@@ -15,8 +14,6 @@ def main():
 	# print(connections)
 
 	solve(connections)
-
-	print(PATH_COUNT)
 
 
 def parse(line):
@@ -36,36 +33,43 @@ def get_connections(data):
 	return dict(connections)
 
 
-def solve(connections, node="start", visited_small_caves=[], path=["start"], prev_small_cave_visited_twice=None):
-	global PATH_COUNT
+def solve(connections):
+	path_count = 0
 
-	for node_parent in connections[node]:
-		small_cave_visited_twice = prev_small_cave_visited_twice
+	stack = deque([ ["start", [], ["start"], None] ])
 
-		if node_parent in visited_small_caves:
-			if prev_small_cave_visited_twice != None:
+	while len(stack) > 0:
+		popped = stack.pop()
+
+		node = popped[0]
+		prev_small_cave_visited_twice = popped[3]
+
+		for node_parent in connections[node]:
+			visited_small_caves, path = copy.copy(popped[1]), copy.copy(popped[2])
+
+			small_cave_visited_twice = prev_small_cave_visited_twice
+
+			if node_parent in visited_small_caves:
+				if prev_small_cave_visited_twice != None:
+					continue
+				small_cave_visited_twice = node_parent
+
+			path.append(node_parent)
+
+			if node_parent == "end":
+				# print(",".join(path))
+				path.pop()
+				path_count += 1
 				continue
-			small_cave_visited_twice = node_parent
 
-		path.append(node_parent)
+			if is_small_cave(node_parent):
+				visited_small_caves.append(node_parent)
 
-		if node_parent == "end":
-			print(",".join(path))
-			path.pop()
-			PATH_COUNT += 1
-			continue
+			stack.append([node_parent, copy.copy(visited_small_caves), copy.copy(path), small_cave_visited_twice])
 
-		if is_small_cave(node_parent):
-			visited_small_caves.append(node_parent)
+			small_cave_visited_twice = prev_small_cave_visited_twice
 
-		solve(connections, node_parent, visited_small_caves, path, small_cave_visited_twice)
-
-		small_cave_visited_twice = prev_small_cave_visited_twice
-
-		if is_small_cave(node_parent):
-			visited_small_caves.pop()
-
-		path.pop()
+	print(path_count)
 
 
 def is_small_cave(node):
@@ -73,6 +77,4 @@ def is_small_cave(node):
 
 
 if __name__ == "__main__":
-	PATH_COUNT = 0
-
 	main()
