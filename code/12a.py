@@ -40,7 +40,7 @@ def solve(connections, node="start", visited_small_caves=[], path=["start"]):
 	global PATH_COUNT
 
 	for node_parent in connections[node]:
-		if is_small_cave(node_parent) and node_parent in visited_small_caves:
+		if node_parent in visited_small_caves:
 			continue
 
 		path.append(node_parent)
