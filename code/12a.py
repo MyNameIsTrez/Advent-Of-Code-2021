@@ -1,20 +1,22 @@
-import utils
+import utils, copy
 
 from collections import defaultdict
 from collections import deque
 
 
 def main():
-	data = utils.parse("12_example_1", parse)
+	data = utils.parse("12_example_2", parse)
 
 	# print(data)
 
 	# TODO: Find a more Pythonic way to do this
 	connections = get_connections(data)
 
-	print(connections)
+	# print(connections)
 
 	solve(connections)
+
+	print(PATH_COUNT)
 
 
 def parse(line):
@@ -33,46 +35,30 @@ def get_connections(data):
 
 
 def solve(connections):
-	queue = deque(["start"])
+	global PATH_COUNT
 
-	path_count = 0
+	stack = deque([ ["start", [], []] ])
 
-	# path = [] # TODO: Store the path per node
+	# print(node)
 
-	visited_small_caves = []
+	while len(stack) > 0:
+		node, visited_small_caves, path = stack.pop()
 
-	while len(queue) > 0:
-		node = queue.pop()
-		print(node)
-
-		is_node_small_cave = is_small_cave(node)
-
-		if is_node_small_cave:
+		if is_small_cave(node):
 			if node in visited_small_caves:
-				# path.pop()
-				if prev_node_was_small_cave:
-					visited_small_caves.pop()
 				continue
 
 			visited_small_caves.append(node)
 
-		# path.append(node)
+		path.append(node)
 
 		if node == "end":
-			# print(",".join(path))
-			# path.pop()
-			# visited_small_caves = []
-
-			path_count += 1
-
+			print(",".join(path))
+			PATH_COUNT += 1
 			continue
 
 		for node_parent in connections[node]:
-			queue.append(node_parent)
-
-		prev_node_was_small_cave = is_node_small_cave
-
-	print(path_count)
+			stack.append([node_parent, copy.copy(visited_small_caves), copy.copy(path)])
 
 
 def is_small_cave(node):
@@ -80,4 +66,6 @@ def is_small_cave(node):
 
 
 if __name__ == "__main__":
+	PATH_COUNT = 0
+
 	main()
