@@ -67,8 +67,6 @@ def solve(connections):
 
 			stack.append([node_parent, copy.copy(visited_small_caves), copy.copy(path), small_cave_visited_twice])
 
-			small_cave_visited_twice = prev_small_cave_visited_twice
-
 	print(path_count)
 
 
