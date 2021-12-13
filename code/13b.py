@@ -19,9 +19,13 @@ def main():
 	for fold in folds:
 		# print(fold)
 		matrix = get_folded(fold, matrix)
-		print(np.count_nonzero(matrix))
+		# print(np.count_nonzero(matrix))
 		# print(matrix)
-		break
+
+	for row in matrix:
+		# print("".join(list(str(row))))
+		print(np.array2string(row, separator="").replace("0", " ").replace("1", "#"))
+	# print(np.count_nonzero(matrix))
 
 
 def parse(day):
