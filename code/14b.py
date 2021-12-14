@@ -6,50 +6,39 @@ from collections import Counter
 def main():
 	polymer_template, pair_insertion_rules = parse("14")
 
-	# print(polymer_template)
-	# print(pair_insertion_rules)
+	pair_counts = get_initial_pair_counts(polymer_template, pair_insertion_rules)
 
-	# print(f"Template: {polymer_template}")
+	unique_characters = set(char for pair_name in pair_insertion_rules for char in pair_name)
 
-	length = len(polymer_template)
+	for _ in range(STEPS):
+		new_pair_counts = pair_counts.copy()
 
-	final_length = get_final_length(length)
-	# print(f"Final length: {final_length}")
+		for pair_name, pair_count in pair_counts.items():
+			new_char = pair_insertion_rules[pair_name]
+			new_pair_counts[pair_name[0] + new_char] += pair_count
+			new_pair_counts[new_char + pair_name[1]] += pair_count
+			new_pair_counts[pair_name] -= pair_count
 
-	characters = [None] * final_length
-	enter_polymer_template(characters, polymer_template)
+		pair_counts = new_pair_counts
 
-	# print(characters)
+	chars_left = { char: 0 for char in unique_characters }
+	chars_right = { char: 0 for char in unique_characters }
 
-	for step in range(STEPS):
-		new_length = length * 2 - 1
+	for pair_name, pair_count in pair_counts.items():
+		chars_left[pair_name[0]] += pair_count
+		chars_right[pair_name[1]] += pair_count
 
-		for i in range(length - 1, 0, -1):
-			# print(f"step: {step}, i: {i}, new_i: {i * 2}")
-			characters[i * 2] = characters[i]
-			characters[i * 2 - 1] = pair_insertion_rules[characters[i - 1] + characters[i]]
-			# print(characters)
+	combined_char_counts = {}
 
-		length = new_length
-			# left = characters[i - 1]
-			# right = characters[i]
+	for char in unique_characters:
+		combined_char_counts[char] = max(chars_left[char], chars_right[char])
 
-			# for left, right in zip(characters, characters[1:]):
-			# 	new = pair_insertion_rules[left + right]
-			# 	old_left_and_new.append(left)
-			# 	old_left_and_new.append(new)
-
-			# print("".join(old_left_and_new) + polymer_template[-1:])
-
-		print(f"Step: {step + 1}")
-
-	polymer_counter = Counter(characters)
+	polymer_counter = Counter(combined_char_counts)
 	commonness = polymer_counter.most_common()
-	# print(commonness)
+
 	name_pair_most_common = commonness[0]
-	# print(name_pair_most_common)
 	name_pair_least_common = commonness[-1]
-	# print(name_pair_least_common)
+
 	score = name_pair_most_common[1] - name_pair_least_common[1]
 	print(score)
 
@@ -64,22 +53,20 @@ def parse(day):
 
 		for ln in f:
 			line = ln.rstrip()
-			# print(line)
 			left, right = line.split(" -> ")
 			pair_insertion_rules[left] = right
 
 	return polymer_template, pair_insertion_rules
 
 
-def get_final_length(length):
-	for step in range(STEPS):
-		length = length * 2 - 1
-	return length
+def get_initial_pair_counts(polymer_template, pair_insertion_rules):
+	pair_counts = { k: 0 for k in pair_insertion_rules.keys() }
 
+	for left, right in zip(polymer_template, polymer_template[1:]):
+		new = pair_insertion_rules[left + right]
+		pair_counts[left + right] += 1
 
-def enter_polymer_template(characters, polymer_template):
-	for i, character in enumerate(polymer_template):
-		characters[i] = character
+	return pair_counts
 
 
 if __name__ == "__main__":
