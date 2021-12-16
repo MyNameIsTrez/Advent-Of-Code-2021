@@ -4,10 +4,11 @@ import time, heapq
 
 import numpy as np
 import threading
+import math
 
 
 def main():
-	data_small = utils.parse("15", parse)
+	data_small = utils.parse("15_example", parse)
 
 	data = get_data_large(data_small)
 
@@ -37,12 +38,10 @@ def parse(line):
 	return list(map(int, line.rstrip()))
 
 
-X = 1
-
 def get_data_large(data_small):
-	data = [None] * len(data_small) * X
-	for i in range(len(data_small) * X):
-		data[i] = [None] * len(data_small[0]) * X
+	data = [None] * len(data_small) * SCALE
+	for i in range(len(data_small) * SCALE):
+		data[i] = [None] * len(data_small[0]) * SCALE
 
 	for i in range(len(data_small)):
 		for j in range(len(data_small[0])):
@@ -50,11 +49,11 @@ def get_data_large(data_small):
 
 	# print(np.array2string(np.array(data)))
 
-	for i in range(len(data_small) * (X - 1)):
+	for i in range(len(data_small) * (SCALE - 1)):
 		for j in range(len(data_small[0])):
 			data[i + len(data_small)][j] = (data[i][j] % 9) + 1
-	for i in range(len(data_small) * X):
-		for j in range(len(data_small[0]) * (X - 1)):
+	for i in range(len(data_small) * SCALE):
+		for j in range(len(data_small[0]) * (SCALE - 1)):
 			data[i][j + len(data_small[0])] = (data[i][j] % 9) + 1
 
 	# print(np.array2string(np.array(data)))
@@ -76,17 +75,19 @@ def stringify_data(data):
 
 
 def get_world_from_data(data):
-	world = { (x, y): risk_level for y, row in enumerate(data) for x, risk_level in enumerate(row) }
+	world = { (SCALE, y): risk_level for y, row in enumerate(data) for SCALE, risk_level in enumerate(row) }
 	return world
 
 
 def get_end_node(data):
-	x = len(data[0]) - 1
+	SCALE = len(data[0]) - 1
 	y = len(data) - 1
 
-	return ( x, y )
+	return ( SCALE, y )
+
 
 stop_loop = False
+
 
 def solve(data, world, end_node):
 	global stop_loop
@@ -106,7 +107,7 @@ def solve(data, world, end_node):
 		node_y = node[1]
 		data[node_y][node_x] = "  "
 
-		time.sleep(0.001)
+		time.sleep(SLEEP_TIME)
 
 		# if node[0] == end_node[0] and node[1] == end_node[1]:
 		# 	for line in data:
@@ -133,20 +134,37 @@ def get_score(neighbor, end_node, node_risk_level, world):
 	neighbor_risk_level = node_risk_level + world[neighbor]
 
 	taxicab_cost_to_end = get_taxicab_cost_to_end(neighbor, end_node)
+	dist_to_end = get_dist_to_end(neighbor, end_node)
 
-	return neighbor_risk_level + taxicab_cost_to_end
+	return neighbor_risk_level * NEIGHBOR_FACTOR + taxicab_cost_to_end * TAXI_FACTOR + dist_to_end * DIST_FACTOR
 
 
 def get_taxicab_cost_to_end(neighbor, end_node):
 	x_diff = abs(end_node[0] - neighbor[0])
 	y_diff = abs(end_node[1] - neighbor[1])
 
-	return (x_diff + y_diff) * -1
+	return (x_diff + y_diff)
+
+
+def get_dist_to_end(neighbor, end_node):
+	x_diff = abs(end_node[0] - neighbor[0])
+	y_diff = abs(end_node[1] - neighbor[1])
+
+	return math.sqrt(x_diff * x_diff + y_diff * y_diff)
+
 
 def printit(data):
 	if not stop_loop:
 		threading.Timer(0.020, printit, [data]).start()
 	cursor.replace_bottom(stringify_data(data))
 
+
 if __name__ == "__main__":
+	SCALE = 10
+	SLEEP_TIME = 0.002
+
+	NEIGHBOR_FACTOR = 1
+	TAXI_FACTOR = -1
+	DIST_FACTOR = 1
+
 	main()
