@@ -14,7 +14,10 @@ def main():
 	# print(data)
 
 	bits = get_hex_to_bits(data)
-	print(f"Bits: {bits}")
+	print(f"Bits without padding: {bits}")
+
+	pad_bits(bits, data)
+	print(f"Bits with padding: {bits}")
 
 	packet_version = get_packet_version(bits)
 	print(f"Packet version: {packet_version}")
@@ -31,9 +34,22 @@ def parse(line):
 	return line.rstrip()
 
 
+def get_padded_data(data):
+	return padded_data
+
+
 def get_hex_to_bits(data):
 	bits_string = bin(int(data, 16))[2:]
 	return deque(map(int, bits_string))
+
+
+def pad_bits(bits, data):
+	print(f"len(data): {len(data)}")
+	print(f"len(data) % 4: {len(data) % 4}")
+	padding = [0] * (len(data) % 4)
+	print(f"Padding: {padding}")
+	bits.extendleft(padding)
+	return bits
 
 
 def get_packet_version(bits):
