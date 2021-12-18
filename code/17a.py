@@ -4,9 +4,7 @@ import utils
 def main():
 	target = utils.parse_line("17_example_1", parse)
 
-	x_velocity = 7
-	y_velocity = 2
-	probe = get_new_probe(x_velocity, y_velocity)
+	probe = get_new_probe(STARTING_X_VELOCITY, STARTING_Y_VELOCITY)
 
 	steps = []
 
@@ -55,8 +53,8 @@ def get_split_min_and_max(string):
 
 def get_new_probe(x_velocity, y_velocity):
 	probe = {
-		"x": 0,
-		"y": 0,
+		"x": START_X,
+		"y": START_Y,
 		"x_velocity": x_velocity,
 		"y_velocity": y_velocity
 	}
@@ -88,8 +86,8 @@ def is_probe_in_target_area(probe_position, target):
 
 
 def is_probe_outside_map(probe_position, target):
-	return (probe_position["x"] <= target["max_x"] and
-			probe_position["y"] <= target["min_y"])
+	return (probe_position["x"] > target["max_x"] or
+			probe_position["y"] < target["min_y"])
 
 
 def get_world(target, steps):
@@ -97,7 +95,7 @@ def get_world(target, steps):
 
 	world = get_empty_world(world_min_x, world_max_x, world_max_y, world_min_y)
 
-	world[world_max_y][0] = "S"
+	world[world_y_to_list_y(START_Y, world_max_y)][START_X] = "S"
 
 	add_target_area_to_world(target, world, world_max_y)
 
@@ -116,7 +114,7 @@ def get_empty_world(world_min_x, world_max_x, world_max_y, world_min_y):
 
 
 def get_world_bounds(target, steps):
-	world_min_x = 0
+	world_min_x = START_X
 	world_max_x = target["max_x"]
 
 	world_max_y = get_world_max_y(steps)
@@ -126,7 +124,8 @@ def get_world_bounds(target, steps):
 
 
 def get_world_max_y(steps):
-	max_y_step = max(steps, key=lambda step_: step_["y"])
+	steps_with_start = [ { "x": START_X, "y": START_Y }, *steps ]
+	max_y_step = max(steps_with_start, key=lambda step_: step_["y"])
 	world_max_y = max_y_step["y"]
 	return world_max_y
 
@@ -139,7 +138,7 @@ def add_steps_to_world(steps, world_max_y, world):
 
 
 def world_y_to_list_y(probe_position_y, world_max_y):
-	return world_max_y + 0 - probe_position_y
+	return world_max_y - probe_position_y
 
 
 def add_target_area_to_world(target, world, world_max_y):
@@ -155,4 +154,10 @@ def draw_world(world):
 
 
 if __name__ == "__main__":
+	START_X = 0
+	START_Y = 0
+
+	STARTING_X_VELOCITY = 6
+	STARTING_Y_VELOCITY = 9
+
 	main()
