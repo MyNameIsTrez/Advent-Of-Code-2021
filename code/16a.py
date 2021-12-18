@@ -65,9 +65,13 @@ def parse(line):
 
 
 def get_hex_to_bits(data):
-	# Adds leading "1" and removes it with [3:] to keep leading zeros
-	bits_string_list = bin(int("1" + data, 16))[3:]
-	return deque(map(int, bits_string_list))
+	bits_string = (bin(int(data, 16))[2:]) # [2:] removes "0b"
+
+	# I'm not sure why zfilling, instead of adding zeros everywhere, is necessary:
+	# "the binary number is padded with leading zeroes until its length is a multiple of four bits"
+	bits_string = bits_string.zfill(len(data) * 4)
+
+	return deque(map(int, bits_string))
 
 
 def get_packet_version(bits):
