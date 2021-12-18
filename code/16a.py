@@ -65,16 +65,8 @@ def parse(line):
 
 
 def get_hex_to_bits(data):
-	bits_string_list = list(bin(int(data, 16))[2:])
-
-	sticking_out_length = len(bits_string_list) % 4
-
-	if sticking_out_length > 0:
-		padding_length = 4 - sticking_out_length
-		bits_string_list = padding_length * ["0"] + bits_string_list
-
-	bits_string_list = EXTRA_LEADING_PADDING_LENGTH * ["0"] + bits_string_list
-
+	# Adds leading "1" and removes it with [3:] to keep leading zeros
+	bits_string_list = bin(int("1" + data, 16))[3:]
 	return deque(map(int, bits_string_list))
 
 
@@ -142,8 +134,6 @@ def get_subpacket_count(bits):
 
 
 if __name__ == '__main__':
-	EXTRA_LEADING_PADDING_LENGTH = 8
-
 	PACKET_VERSION_SUM = 0
 
 	main()
