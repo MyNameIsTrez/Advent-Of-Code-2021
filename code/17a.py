@@ -13,12 +13,13 @@ def main():
 	while True:
 		step(probe)
 		probe_position = get_probe_position(probe)
+
+		if is_probe_outside_map(probe_position, target):
+			break
+
 		steps.append(probe_position)
 
-		is_probe_in_target_area_bool = is_probe_in_target_area(probe_position, target)
-		is_probe_outside_map_bool = is_probe_outside_map(probe_position, target)
-
-		if is_probe_in_target_area_bool or is_probe_outside_map_bool:
+		if is_probe_in_target_area(probe_position, target):
 			break
 
 	world = get_world(target, steps)
@@ -87,7 +88,8 @@ def is_probe_in_target_area(probe_position, target):
 
 
 def is_probe_outside_map(probe_position, target):
-	return probe_position["x"] <= target["max_x"] and probe_position["y"] <= target["max_y"]
+	return (probe_position["x"] <= target["max_x"] and
+			probe_position["y"] <= target["min_y"])
 
 
 def get_world(target, steps):
