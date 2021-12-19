@@ -2,9 +2,29 @@ import utils
 
 
 def main():
-	target = utils.parse_line("17_example_1", parse)
+	target = utils.parse_line("17", parse)
 
-	probe = get_new_probe(STARTING_X_VELOCITY, STARTING_Y_VELOCITY)
+	best_steps = None
+
+	for y_velocity in range(STARTING_Y_VELOCITY, ENDING_Y_VELOCITY):
+		for x_velocity in range(STARTING_X_VELOCITY, ENDING_X_VELOCITY):
+			steps = run(x_velocity, y_velocity, target)
+
+			if steps:
+				best_steps = steps
+				best_x_velocity = x_velocity
+				best_y_velocity = y_velocity
+
+	world = get_world(target, best_steps)
+
+	draw_world(world)
+
+	print(best_x_velocity, best_y_velocity)
+	print(f"Highest Y value reached: {get_highest_y_value(best_steps)}")
+
+
+def run(starting_x_velocity, starting_y_velocity, target):
+	probe = get_new_probe(starting_x_velocity, starting_y_velocity)
 
 	steps = []
 
@@ -13,16 +33,12 @@ def main():
 		probe_position = get_probe_position(probe)
 
 		if is_probe_outside_map(probe_position, target):
-			break
+			return False
 
 		steps.append(probe_position)
 
 		if is_probe_in_target_area(probe_position, target):
-			break
-
-	world = get_world(target, steps)
-
-	draw_world(world)
+			return steps
 
 
 def parse(line):
@@ -153,11 +169,20 @@ def draw_world(world):
 		print("".join(row))
 
 
+def get_highest_y_value(best_steps):
+	best_step = max(best_steps, key=lambda x : x["y"])
+	highest_y_value = best_step["y"]
+	return highest_y_value
+
+
 if __name__ == "__main__":
+	STARTING_X_VELOCITY = 0
+	STARTING_Y_VELOCITY = 0
+
+	ENDING_X_VELOCITY = 50
+	ENDING_Y_VELOCITY = 300
+
 	START_X = 0
 	START_Y = 0
-
-	STARTING_X_VELOCITY = 6
-	STARTING_Y_VELOCITY = 9
 
 	main()
