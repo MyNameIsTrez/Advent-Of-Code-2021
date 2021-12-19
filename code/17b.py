@@ -4,18 +4,39 @@ import utils
 def main():
 	target = utils.parse_line("17", parse)
 
+	best_steps = None
+
+	valid_velocity_values_count = 0
+
+	highest_x_velocity = 0
+
+	lowest_y_velocity = float("inf")
+	highest_y_velocity = 0
+
 	for y_velocity in range(STARTING_Y_VELOCITY, ENDING_Y_VELOCITY):
 		for x_velocity in range(STARTING_X_VELOCITY, ENDING_X_VELOCITY):
 			steps = run(x_velocity, y_velocity, target)
 
 			if steps:
 				best_steps = steps
+				valid_velocity_values_count += 1
+
+				highest_x_velocity = max(highest_x_velocity, x_velocity)
+
+				lowest_y_velocity = min(lowest_y_velocity, y_velocity)
+				highest_y_velocity = max(highest_y_velocity, y_velocity)
 
 	world = get_world(target, best_steps)
 
 	draw_world(world)
 
+	print(f"Highest X velocity: {highest_x_velocity}")
+
+	print(f"Lowest Y velocity: {lowest_y_velocity}")
+	print(f"Highest Y velocity: {highest_y_velocity}")
+
 	print(f"Highest Y value reached: {get_highest_y_value(best_steps)}")
+	print(f"Valid velocity values count: {valid_velocity_values_count}")
 
 
 def run(starting_x_velocity, starting_y_velocity, target):
