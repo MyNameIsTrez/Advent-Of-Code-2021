@@ -4,24 +4,10 @@ import json, math
 
 
 def main():
-	global PREV_VALUE_LIST, PREV_VALUE_INDEX, REMAINING_EXPLODED_RIGHT_VALUE
-
 	with open("../inputs/18_example_addition_5.txt") as f:
 		first_line_data = json.loads(f.readline())
 		data = first_line_data
-
 		print(f"First line         : {first_line_data}")
-
-
-		# TODO: Don't use globals
-		PREV_VALUE_LIST = None
-		PREV_VALUE_INDEX = None
-
-		REMAINING_EXPLODED_RIGHT_VALUE = None
-
-
-		explode_and_split(data)
-
 
 		for line in f:
 			line_data = json.loads(line)
@@ -31,20 +17,20 @@ def main():
 
 			print(f"Data after adding  : {data}")
 
-
-			PREV_VALUE_LIST = None
-			PREV_VALUE_INDEX = None
-
-			REMAINING_EXPLODED_RIGHT_VALUE = None
-
-
 			explode_and_split(data)
 
 
 def explode_and_split(data):
-	global EXPLODED_ONE, SPLITTED_ONE
+	global PREV_VALUE_LIST, PREV_VALUE_INDEX, REMAINING_EXPLODED_RIGHT_VALUE, EXPLODED_ONE, SPLITTED_ONE
 
 	while True:
+		# TODO: Don't use globals
+		PREV_VALUE_LIST = None
+		PREV_VALUE_INDEX = None
+
+		REMAINING_EXPLODED_RIGHT_VALUE = None
+
+
 		EXPLODED_ONE = False
 		explode_all(data)
 
@@ -100,7 +86,7 @@ def explode_all(sub_data, depth=0):
 
 
 def split_one(sub_data, depth=0):
-	global PREV_VALUE_LIST, PREV_VALUE_INDEX, REMAINING_EXPLODED_RIGHT_VALUE, SPLITTED_ONE
+	global SPLITTED_ONE
 
 	for i, sub_item in enumerate(sub_data):
 		if type(sub_item) == list:
