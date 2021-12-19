@@ -5,19 +5,22 @@ import json, math
 
 def main():
 	with open("../inputs/18.txt") as f:
-		first_line_data = json.loads(f.readline())
-		data = first_line_data
-		print(f"First line         : {first_line_data}")
+		lines = f.readlines()
+		lines = [ json.loads(line) for line in lines]
 
-		for line in f:
-			line_data = json.loads(line)
-			print(f"Adding line        : {line_data}")
+	first_line_data = lines[0]
+	data = first_line_data
+	print(f"First line         : {first_line_data}")
 
-			data = [ data, line_data ]
+	for line in lines[1:]:
+		line_data = line
+		print(f"Adding line        : {line_data}")
 
-			print(f"Data after adding  : {data}")
+		data = [ data, line_data ]
 
-			explode_and_split(data)
+		print(f"Data after adding  : {data}")
+
+		explode_and_split(data)
 
 	magnitude = get_magnitude(data)
 	print(f"Magnitude: {magnitude}")
