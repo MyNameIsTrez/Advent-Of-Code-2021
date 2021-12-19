@@ -4,7 +4,7 @@ import json, math
 
 
 def main():
-	with open("../inputs/18_example_addition_5.txt") as f:
+	with open("../inputs/18.txt") as f:
 		first_line_data = json.loads(f.readline())
 		data = first_line_data
 		print(f"First line         : {first_line_data}")
@@ -18,6 +18,9 @@ def main():
 			print(f"Data after adding  : {data}")
 
 			explode_and_split(data)
+
+	magnitude = get_magnitude(data)
+	print(f"Magnitude: {magnitude}")
 
 
 def explode_and_split(data):
@@ -103,6 +106,24 @@ def split_one(sub_data, depth=0):
 			sub_data[i] = [ split_left, split_right ]
 
 			return True
+
+
+def get_magnitude(sub_data):
+	combined_sub_magnitudes = 0
+
+	for i, sub_item in enumerate(sub_data):
+		if type(sub_item) == list:
+			sub_magnitude = get_magnitude(sub_item)
+			if i == 0: # Left
+				combined_sub_magnitudes += 3 * sub_magnitude
+			elif i == 1: # Right
+				combined_sub_magnitudes += 2 * sub_magnitude
+		elif i == 0: # Left
+			combined_sub_magnitudes += 3 * sub_item
+		elif i == 1: # Right
+			combined_sub_magnitudes += 2 * sub_item
+
+	return combined_sub_magnitudes
 
 
 if __name__ == "__main__":
