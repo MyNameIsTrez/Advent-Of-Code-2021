@@ -6,35 +6,41 @@ import json, math
 def main():
 	global EXPLODED_ONE, SPLITTED_ONE
 
-	# data = utils.parse("18_example_explode_4", parse)
-	data = utils.parse("18_example_addition_1", parse)
+	data = parse()
+
+	print(f"After adding all lines: {data}")
 
 	while True:
-		print(data)
-
 		EXPLODED_ONE = False
-		# print(EXPLODED_ONE)
 		explode_all(data)
-		# print(EXPLODED_ONE)
 
 		if not EXPLODED_ONE:
 			SPLITTED_ONE = False
-			# print(SPLITTED_ONE)
 			split_one(data)
-			# print(SPLITTED_ONE)
 
 			if not SPLITTED_ONE:
 				break
+			else:
+				print(f"After splitting one   : {data}")
+		else:
+			print(f"After exploding all   : {data}")
 
 
-def parse(line):
-	return json.loads(line)
+def parse():
+	with open("../inputs/18_example_addition_1.txt") as f:
+		first_line = f.readline()
+		data = json.loads(first_line)
+
+		for line in f:
+			line_data = json.loads(line)
+			data = [ data, line_data ]
+
+		return data
 
 
 def explode_all(sub_data, depth=0):
 	global PREV_VALUE_LIST, PREV_VALUE_INDEX, REMAINING_EXPLODED_RIGHT_VALUE, EXPLODED_ONE
 
-	# print(sub_data)
 	if depth == 4:
 		return sub_data
 	for i, sub_item in enumerate(sub_data):
@@ -44,7 +50,6 @@ def explode_all(sub_data, depth=0):
 			if exploded:
 				EXPLODED_ONE = True
 				exploded_left, exploded_right = exploded
-				# print(exploded_left, exploded_right)
 
 				# TODO: What if there's already something in the globals?
 				if PREV_VALUE_LIST:
@@ -69,7 +74,6 @@ def explode_all(sub_data, depth=0):
 def split_one(sub_data, depth=0):
 	global PREV_VALUE_LIST, PREV_VALUE_INDEX, REMAINING_EXPLODED_RIGHT_VALUE, SPLITTED_ONE
 
-	# print(sub_data)
 	for i, sub_item in enumerate(sub_data):
 		if type(sub_item) == list:
 			splitted = split_one(sub_item, depth + 1)
