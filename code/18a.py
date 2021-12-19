@@ -4,11 +4,45 @@ import json, math
 
 
 def main():
+	global PREV_VALUE_LIST, PREV_VALUE_INDEX, REMAINING_EXPLODED_RIGHT_VALUE
+
+	with open("../inputs/18_example_addition_5.txt") as f:
+		first_line_data = json.loads(f.readline())
+		data = first_line_data
+
+		print(f"First line         : {first_line_data}")
+
+
+		# TODO: Don't use globals
+		PREV_VALUE_LIST = None
+		PREV_VALUE_INDEX = None
+
+		REMAINING_EXPLODED_RIGHT_VALUE = None
+
+
+		explode_and_split(data)
+
+
+		for line in f:
+			line_data = json.loads(line)
+			print(f"Adding line        : {line_data}")
+
+			data = [ data, line_data ]
+
+			print(f"Data after adding  : {data}")
+
+
+			PREV_VALUE_LIST = None
+			PREV_VALUE_INDEX = None
+
+			REMAINING_EXPLODED_RIGHT_VALUE = None
+
+
+			explode_and_split(data)
+
+
+def explode_and_split(data):
 	global EXPLODED_ONE, SPLITTED_ONE
-
-	data = parse()
-
-	print(f"After adding all lines: {data}")
 
 	while True:
 		EXPLODED_ONE = False
@@ -21,35 +55,24 @@ def main():
 			if not SPLITTED_ONE:
 				break
 			else:
-				print(f"After splitting one   : {data}")
+				print(f"After splitting one: {data}")
 		else:
-			print(f"After exploding all   : {data}")
-
-
-def parse():
-	with open("../inputs/18_example_addition_1.txt") as f:
-		first_line = f.readline()
-		data = json.loads(first_line)
-
-		for line in f:
-			line_data = json.loads(line)
-			data = [ data, line_data ]
-
-		return data
+			print(f"After exploding all: {data}")
 
 
 def explode_all(sub_data, depth=0):
 	global PREV_VALUE_LIST, PREV_VALUE_INDEX, REMAINING_EXPLODED_RIGHT_VALUE, EXPLODED_ONE
 
-	if depth == 4:
-		return sub_data
 	for i, sub_item in enumerate(sub_data):
 		if type(sub_item) == list:
-			exploded = explode_all(sub_item, depth + 1)
+			if depth + 1 == 4:
+				if REMAINING_EXPLODED_RIGHT_VALUE:
+					sub_item[0] += REMAINING_EXPLODED_RIGHT_VALUE
 
-			if exploded:
+					REMAINING_EXPLODED_RIGHT_VALUE = None
+
 				EXPLODED_ONE = True
-				exploded_left, exploded_right = exploded
+				exploded_left, exploded_right = sub_item
 
 				# TODO: What if there's already something in the globals?
 				if PREV_VALUE_LIST:
@@ -61,6 +84,11 @@ def explode_all(sub_data, depth=0):
 				REMAINING_EXPLODED_RIGHT_VALUE = exploded_right
 
 				sub_data[i] = 0
+
+				PREV_VALUE_LIST = sub_data
+				PREV_VALUE_INDEX = i
+			else:
+				exploded = explode_all(sub_item, depth + 1)
 		else:
 			if REMAINING_EXPLODED_RIGHT_VALUE:
 				sub_data[i] += REMAINING_EXPLODED_RIGHT_VALUE
@@ -92,13 +120,4 @@ def split_one(sub_data, depth=0):
 
 
 if __name__ == "__main__":
-	# TODO: Don't use globals
-	PREV_VALUE_LIST = None
-	PREV_VALUE_INDEX = None
-
-	REMAINING_EXPLODED_RIGHT_VALUE = None
-
-	EXPLODED_ONE = False
-	SPLITTED_ONE = False
-
 	main()
