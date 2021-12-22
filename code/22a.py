@@ -3,8 +3,15 @@ import utils
 
 def main():
 	data = parse()
-
 	print(data)
+
+	grid = get_empty_grid()
+	# print(grid)
+
+	# for cuboid in data:
+	# 	fill_grid(cuboid)
+
+	print(recursively_sum(grid))
 
 
 def parse():
@@ -43,8 +50,35 @@ def get_start_and_end(coordinates):
 	return start, end
 
 
+def get_empty_grid():
+	grid = []
+
+	for z in range(COORDINATE_RANGE):
+		grid.append([])
+		for y in range(COORDINATE_RANGE):
+			grid[z].append([False] * COORDINATE_RANGE)
+
+	return grid
+
+
+def fill_grid(cuboid):
+	pass
+
+
+def recursively_sum(element):
+	if type(element) == list:
+		sub_elements_sum = 0
+		for sub_element in element:
+			sub_elements_sum += recursively_sum(sub_element)
+		return sub_elements_sum
+	else:
+		return element
+
+
 if __name__ == "__main__":
 	MINIMUM_COORDINATE = -50
 	MAXIMUM_COORDINATE = 50
+
+	COORDINATE_RANGE = MAXIMUM_COORDINATE - MINIMUM_COORDINATE
 
 	main()
