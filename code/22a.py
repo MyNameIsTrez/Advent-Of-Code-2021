@@ -8,8 +8,8 @@ def main():
 	grid = get_empty_grid()
 	# print(grid)
 
-	# for cuboid in data:
-	# 	fill_grid(cuboid)
+	for cuboid in data:
+		update_grid(cuboid, grid)
 
 	print(recursively_sum(grid))
 
@@ -34,7 +34,7 @@ def parse():
 				continue
 
 			data.append({
-				"state": state,
+				"state": True if state == "on" else False,
 				"x_start": x_start, "x_end": x_end,
 				"y_start": y_start, "y_end": y_end,
 				"z_start": z_start, "z_end": z_end
@@ -61,8 +61,11 @@ def get_empty_grid():
 	return grid
 
 
-def fill_grid(cuboid):
-	pass
+def update_grid(cuboid, grid):
+	for z in range(cuboid["z_start"], cuboid["z_end"] + 1):
+		for y in range(cuboid["y_start"], cuboid["y_end"] + 1):
+			for x in range(cuboid["x_start"], cuboid["x_end"] + 1):
+				grid[z][y][x] = cuboid["state"]
 
 
 def recursively_sum(element):
