@@ -24,5 +24,10 @@ def parse():
 	return scanners
 
 
+def get_distance_squared(beacon_1, beacon_2):
+	return ((beacon_1[0] - beacon_2[0]) ** 2 +
+			(beacon_1[1] - beacon_2[1]) ** 2)
+
+
 if __name__ == "__main__":
 	main()
