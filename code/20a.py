@@ -86,14 +86,14 @@ def main():
 
 	print("Step: Start")
 	print(f"Alive cells: {len(alive_cells)}")
-	print_grid(alive_cells)
+	# print_grid(alive_cells)
 
 	for step in range(1, STEPS + 1):
 		alive_cells = get_next_alive_cells(alive_cells, enhancement, step)
 
 		print(f"Step: {step}")
 		print(f"Alive cells: {len(alive_cells)}")
-		print_grid(alive_cells)
+		# print_grid(alive_cells)
 
 
 def parse():
@@ -105,9 +105,12 @@ def parse():
 	# Attempted answers:
 	# 5781, which is too low
 	# 5824, which is too high. Gotten by changing step % 2 == 1 to step % 2 == 0
-	with open("../inputs/20_infinity_test.txt") as f:
 	# with open("../inputs/20.txt") as f:
+
+	# with open("../inputs/20_infinity_test.txt") as f:
+	with open("../inputs/20_correct.txt") as f: # The correct answer is 5326
 		lines = f.read().splitlines()
+
 	for line in lines:
 		if line == "":
 			reading_enhancement = False
