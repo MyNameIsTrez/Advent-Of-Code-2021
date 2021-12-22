@@ -12,26 +12,8 @@ def main():
 	player_2_score = 0
 	# print(player_1_score, player_2_score)
 
-
-	states = get_empty_states()
-
-	states[player_1_pos - 1] = 1
-	# states[7] = 1
-	print(states)
-
-
-	for _ in range(15):
-		new_states = get_empty_states()
-
-		for state_index, state_count in enumerate(states):
-			# TODO: I'm not sure whether the die should be rolled more than once
-			for offset in range(1, DIE_SIDES + 1):
-				new_state_index = (state_index + offset) % MAX_POS
-				new_states[new_state_index] += state_count
-
-		print(new_states)
-
-		states = new_states
+	player_1_wins, player_2_wins = solve(player_1_pos, player_1_score, player_2_pos, player_2_score, 1)
+	print(player_1_wins, player_2_wins)
 
 
 def parse(line):
@@ -42,13 +24,50 @@ def player_pos_string_to_int(player, data):
 	return int(data[player - 1].replace(f"Player {player} starting position: ", ""))
 
 
-def get_empty_states():
-	return [0] * 10
+def solve(player_1_pos, player_1_score, player_2_pos, player_2_score, player_turn):
+	arguments = (player_1_pos, player_1_score, player_2_pos, player_2_score, player_turn)
+
+	if arguments in cache:
+		return cache[arguments]
+
+
+	player_1_wins = 0
+	player_2_wins = 0
+
+	next_player_turn = 2 if player_turn == 1 else 1
+
+	for die_side in range(1, DIE_SIDES + 1):
+		if player_turn == 1:
+			next_player_1_pos = ((player_1_pos + (die_side - 1)) % MAX_POS) + 1
+			next_player_1_score = player_1_score + next_player_1_pos
+
+			if next_player_1_score >= WIN_SCORE:
+				player_1_wins += 1
+			else:
+				additional_player_1_wins, additional_player_2_wins = solve(next_player_1_pos, next_player_1_score, player_2_pos, player_2_score, next_player_turn)
+				player_1_wins += additional_player_1_wins
+				player_2_wins += additional_player_2_wins
+		else:
+			next_player_2_pos = ((player_2_pos + (die_side - 1)) % MAX_POS) + 1
+			next_player_2_score = player_2_score + next_player_2_pos
+
+			if next_player_2_score >= WIN_SCORE:
+				player_2_wins += 1
+			else:
+				additional_player_1_wins, additional_player_2_wins = solve(player_1_pos, player_1_score, next_player_2_pos, next_player_2_score, next_player_turn)
+				player_1_wins += additional_player_1_wins
+				player_2_wins += additional_player_2_wins
+
+	cache[arguments] = (player_1_wins, player_2_wins)
+
+	return cache[arguments]
 
 
 if __name__ == "__main__":
 	DIE_SIDES = 3
 	MAX_POS = 10
 	WIN_SCORE = 21
+
+	cache = dict()
 
 	main()
