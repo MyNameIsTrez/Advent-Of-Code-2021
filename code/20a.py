@@ -81,19 +81,19 @@ def main():
 	# print(f"Starting cell state after step 2: {next_cell_state}")
 
 
-	alive = initialize_alive(input_image)
-	# print(alive)
+	alive_cells = initialize_alive_cells(input_image)
+	# print(alive_cells)
 
 	print("Step: Start")
-	print(f"Alive cells: {len(alive)}")
-	print_grid(alive)
+	print(f"Alive cells: {len(alive_cells)}")
+	print_grid(alive_cells)
 
 	for step in range(1, STEPS + 1):
-		alive = get_next_alive(alive, enhancement, step)
+		alive_cells = get_next_alive_cells(alive_cells, enhancement, step)
 
 		print(f"Step: {step}")
-		print(f"Alive cells: {len(alive)}")
-		print_grid(alive)
+		print(f"Alive cells: {len(alive_cells)}")
+		print_grid(alive_cells)
 
 
 def parse():
@@ -102,8 +102,11 @@ def parse():
 
 	reading_enhancement = True
 
-	# with open("../inputs/20_example.txt") as f:
+	# Attempted answers:
+	# 5781, which is too low
+	# 5824, which is too high. Gotten by changing step % 2 == 1 to step % 2 == 0
 	with open("../inputs/20_infinity_test.txt") as f:
+	# with open("../inputs/20.txt") as f:
 		lines = f.read().splitlines()
 	for line in lines:
 		if line == "":
@@ -124,19 +127,19 @@ def characters_to_binary_string(line):
 	return line.replace(".", "0").replace("#", "1")
 
 
-def initialize_alive(input_image):
-	alive = set()
+def initialize_alive_cells(input_image):
+	alive_cells = set()
 
 	for y in range(len(input_image)):
 		for x in range(len(input_image[0])):
 			if input_image[y][x] == "1":
-				alive.add( (x, y) )
+				alive_cells.add( (x, y) )
 
-	return alive
+	return alive_cells
 
 
-def print_grid(alive):
-	min_x, min_y, max_x, max_y = get_grid_dimensions(alive)
+def print_grid(alive_cells):
+	min_x, min_y, max_x, max_y = get_grid_dimensions(alive_cells)
 	# print(min_x, min_y, max_x, max_y)
 
 	width  = max_x - min_x + 1
@@ -145,7 +148,7 @@ def print_grid(alive):
 
 	grid = get_empty_grid(width, height)
 
-	set_alive_cells(alive, grid, min_x, min_y)
+	set_alive_cells(alive_cells, grid, min_x, min_y)
 
 	for row in grid:
 		line = "".join(row)
@@ -154,13 +157,13 @@ def print_grid(alive):
 
 
 
-def get_grid_dimensions(alive):
+def get_grid_dimensions(alive_cells):
 	min_x = math.inf
 	min_y = math.inf
 	max_x = 0
 	max_y = 0
 
-	for cell in alive:
+	for cell in alive_cells:
 		cell_x = cell[0]
 		cell_y = cell[1]
 
@@ -170,7 +173,7 @@ def get_grid_dimensions(alive):
 		max_x = max(max_x, cell_x)
 		max_y = max(max_y, cell_y)
 
-	print(min_x, min_y, max_x, max_y)
+	# print(min_x, min_y, max_x, max_y)
 
 	return min_x, min_y, max_x, max_y
 
@@ -179,41 +182,41 @@ def get_empty_grid(width, height):
 	return [ ["."] * width for _ in range(height) ]
 
 
-def set_alive_cells(alive, grid, min_x, min_y):
-	for cell in alive:
+def set_alive_cells(alive_cells, grid, min_x, min_y):
+	for cell in alive_cells:
 		cell_x = cell[0]
 		cell_y = cell[1]
 
 		grid[cell_y - min_y][cell_x - min_x] = "#"
 
 
-def get_next_alive(alive, enhancement, step):
-	inspectable_cells = get_inspectable_cells(alive)
+def get_next_alive_cells(alive_cells, enhancement, step):
+	inspectable_cells = get_inspectable_cells(alive_cells)
 	# print(inspectable_cells)
 
-	next_alive = set()
+	next_alive_cells = set()
 
-	for cell in inspectable_cells:
-		next_cell_state = get_next_cell_state(cell, alive, enhancement, step, inspectable_cells)
+	for inspectable_cell in inspectable_cells:
+		next_cell_state = get_next_cell_state(inspectable_cell, alive_cells, enhancement, step, inspectable_cells)
 
 		if next_cell_state == "1":
-			next_alive.add(cell)
+			next_alive_cells.add(inspectable_cell)
 
-	return next_alive
+	return next_alive_cells
 
 
-def get_inspectable_cells(alive):
+def get_inspectable_cells(alive_cells):
 	inspectable_cells = set()
 
-	for cell in alive:
-		for neighbor_x, neighbor_y in neighbors_iterator(cell, alive):
+	for cell in alive_cells:
+		for neighbor_x, neighbor_y in neighbors_generator(cell, alive_cells):
 			if (neighbor_x, neighbor_y) not in inspectable_cells:
 				inspectable_cells.add( (neighbor_x, neighbor_y) )
 
 	return inspectable_cells
 
 
-def neighbors_iterator(cell, alive):
+def neighbors_generator(cell, alive_cells):
 	cell_x = cell[0]
 	cell_y = cell[1]
 
@@ -222,11 +225,11 @@ def neighbors_iterator(cell, alive):
 			yield neighbor_x, neighbor_y
 
 
-def get_next_cell_state(cell, alive, enhancement, step, inspectable_cells):
+def get_next_cell_state(cell, alive_cells, enhancement, step, inspectable_cells):
 	neighbors_string = ""
 
-	for neighbor_x, neighbor_y in neighbors_iterator(cell, alive):
-		if (neighbor_x, neighbor_y) in alive:
+	for neighbor_x, neighbor_y in neighbors_generator(cell, alive_cells):
+		if (neighbor_x, neighbor_y) in alive_cells:
 			neighbors_string += "1"
 		else:
 			if (neighbor_x, neighbor_y) in inspectable_cells:
