@@ -2,13 +2,26 @@ import utils
 
 
 def main():
-	data = utils.parse("19_example_2d_1", parse)
+	scanners = parse()
 
-	print(data)
+	print(scanners)
 
 
-def parse(line):
-	return line.rstrip()
+def parse():
+	scanners = []
+
+	with open("../inputs/19_example_2d_1.txt") as f:
+		for line in f.readlines():
+			line = line.rstrip()
+
+			if "--" in line: # If this line announces a new scanner number
+				scanners.append([])
+			elif line != "":
+				x, y = line.split(",")
+				beacon_coordinate = (int(x), int(y))
+				scanners[-1].append(beacon_coordinate)
+
+	return scanners
 
 
 if __name__ == "__main__":
