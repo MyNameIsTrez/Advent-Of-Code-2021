@@ -9,7 +9,7 @@ def main():
 def parse():
 	data = []
 
-	with open("../inputs/22.txt") as f:
+	with open("../inputs/22_example_3.txt") as f:
 		for line in f.readlines():
 			state, coordinates = line.split()
 
