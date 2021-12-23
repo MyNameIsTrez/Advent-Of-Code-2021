@@ -2,7 +2,7 @@ import utils
 
 
 def main():
-	data = utils.parse("21_example", parse) # TODO: Don't use the example!
+	data = utils.parse("21", parse) # TODO: Don't use the example!
 
 	player_1_pos = player_pos_string_to_int(1, data)
 	player_2_pos = player_pos_string_to_int(2, data)
@@ -36,9 +36,9 @@ def solve(player_1_pos, player_1_score, player_2_pos, player_2_score, player_tur
 
 	next_player_turn = 2 if player_turn == 1 else 1
 
-	for die_side in range(1, DIE_SIDES + 1):
+	for triple_die_total in triple_die_total_generator():
 		if player_turn == 1:
-			next_player_1_pos = ((player_1_pos + (die_side - 1)) % MAX_POS) + 1
+			next_player_1_pos = ((player_1_pos + (triple_die_total - 1)) % MAX_POS) + 1
 			next_player_1_score = player_1_score + next_player_1_pos
 
 			if next_player_1_score >= WIN_SCORE:
@@ -48,7 +48,7 @@ def solve(player_1_pos, player_1_score, player_2_pos, player_2_score, player_tur
 				player_1_wins += additional_player_1_wins
 				player_2_wins += additional_player_2_wins
 		else:
-			next_player_2_pos = ((player_2_pos + (die_side - 1)) % MAX_POS) + 1
+			next_player_2_pos = ((player_2_pos + (triple_die_total - 1)) % MAX_POS) + 1
 			next_player_2_score = player_2_score + next_player_2_pos
 
 			if next_player_2_score >= WIN_SCORE:
@@ -61,6 +61,14 @@ def solve(player_1_pos, player_1_score, player_2_pos, player_2_score, player_tur
 	cache[arguments] = (player_1_wins, player_2_wins)
 
 	return cache[arguments]
+
+
+def triple_die_total_generator():
+	for die_side_1 in range(1, DIE_SIDES + 1):
+		for die_side_2 in range(1, DIE_SIDES + 1):
+			for die_side_3 in range(1, DIE_SIDES + 1):
+				triple_die_total = die_side_1 + die_side_2 + die_side_3
+				yield triple_die_total
 
 
 if __name__ == "__main__":
