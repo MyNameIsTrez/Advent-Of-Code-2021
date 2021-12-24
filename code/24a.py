@@ -19,9 +19,13 @@ def parse(line):
 		return {
 			"type": "operator",
 			"operator": split[0],
-			"operand_left": split[1],
-			"operand_right": split[2],
+			"operand_left": attempt_convert_to_int(split[1]),
+			"operand_right": attempt_convert_to_int(split[2]),
 		}
+
+
+def attempt_convert_to_int(string):
+	return int(string) if string.lstrip("-").isdecimal() else string
 
 
 if __name__ == "__main__":
