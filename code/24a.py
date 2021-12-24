@@ -2,8 +2,49 @@ import utils
 
 
 def main():
-	instructions = utils.parse("24_example_2", parse)
+	instructions = utils.parse("24", parse)
 
+	minimum_model_number = get_minimum_model_number()
+	model_number = minimum_model_number
+	# model_number = 13579246899999
+
+	while "0" in str(model_number) or is_valid_model_number(model_number, instructions):
+		model_number += 1
+	
+	print(f"The largest model number accepted by MONAD is {model_number - 1}")
+
+
+def parse(line):
+	split = line.split() # Splits spaces and removes newline
+
+	if len(split) == 2:
+		return {
+			"type": "input",
+			"input_variable": split[1],
+		}
+	else:
+		return {
+			"type": "operation",
+			"operator": split[0],
+			"operand_left": attempt_convert_to_int(split[1]),
+			"operand_right": attempt_convert_to_int(split[2]),
+		}
+
+
+def attempt_convert_to_int(string):
+	return int(string) if string.lstrip("-").isdecimal() else string
+
+
+def get_minimum_model_number():
+	"""
+	Submarine model numbers are always fourteen-digit numbers
+	consisting only of digits 1 through 9.
+	The digit 0 cannot appear in a model number.
+	"""
+	return int("1" * 14)
+
+
+def is_valid_model_number(model_number, instructions):
 	state = {
 		"w": 0,
 		"x": 0,
@@ -11,7 +52,7 @@ def main():
 		"z": 0,
 	}
 
-	digits = get_digits_from_int(13)
+	digits = get_digits_from_int(model_number)
 
 	for instruction in instructions:
 		match instruction["type"]:
@@ -34,31 +75,11 @@ def main():
 						state[operand_left] //= operand_right_value # TODO: Might need to round up towards zero when negative
 					case "mod":
 						state[operand_left] %= operand_right_value
+						# state[operand_left] = math.fmod(state[operand_left], operand_right_value)
 					case "eql":
 						state[operand_left] = 1 if state[operand_left] == operand_right_value else 0
 
-	print(state)
-
-
-def parse(line):
-	split = line.split() # Splits spaces and removes newline
-
-	if len(split) == 2:
-		return {
-			"type": "input",
-			"input_variable": split[1],
-		}
-	else:
-		return {
-			"type": "operation",
-			"operator": split[0],
-			"operand_left": attempt_convert_to_int(split[1]),
-			"operand_right": attempt_convert_to_int(split[2]),
-		}
-
-
-def attempt_convert_to_int(string):
-	return int(string) if string.lstrip("-").isdecimal() else string
+	return state["z"] == 0
 
 
 def get_digits_from_int(integer):
