@@ -2,34 +2,15 @@ import utils
 
 
 def main():
-	instructions = utils.parse("24", parse)
-
 	model_number = get_maximum_model_number()
 	# model_number = 13579246899999
 
-	while "0" in str(model_number) or not is_valid_model_number(model_number, instructions):
+	while "0" in str(model_number) or not is_valid_model_number(model_number):
 		model_number -= 1
 		if model_number % 10000 == 0:
 			print(model_number)
 	
 	print(f"The largest model number accepted by MONAD is {model_number}")
-
-
-def parse(line):
-	split = line.split() # Splits spaces and removes newline
-
-	if len(split) == 2:
-		return {
-			"type": "input",
-			"input_variable": split[1],
-		}
-	else:
-		return {
-			"type": "operation",
-			"operator": split[0],
-			"operand_left": attempt_convert_to_int(split[1]),
-			"operand_right": attempt_convert_to_int(split[2]),
-		}
 
 
 def attempt_convert_to_int(string):
@@ -45,42 +26,24 @@ def get_maximum_model_number():
 	return int("9" * 14)
 
 
-def is_valid_model_number(model_number, instructions):
-	state = {
-		"w": 0,
-		"x": 0,
-		"y": 0,
-		"z": 0,
-	}
+def is_valid_model_number(model_number):
+	w = x = y = z = 0
 
 	digits = get_digits_from_int(model_number)
 
-	for instruction in instructions:
-		match instruction["type"]:
-			case "input":
-				input_variable = instruction["input_variable"]
-				next_most_significant_digit = digits.pop(0)
-				state[input_variable] = next_most_significant_digit
-			case "operation":
-				operator = instruction["operator"]
-				operand_left = instruction["operand_left"]
-				operand_right = instruction["operand_right"]
-				operand_right_value = state[operand_right] if type(operand_right) == str else operand_right
-				
-				match operator:
-					case "add":
-						state[operand_left] += operand_right_value
-					case "mul":
-						state[operand_left] *= operand_right_value
-					case "div":
-						state[operand_left] //= operand_right_value # TODO: Might need to round up towards zero when negative
-					case "mod":
-						state[operand_left] %= operand_right_value
-						# state[operand_left] = math.fmod(state[operand_left], operand_right_value) # TODO: Different behavior for negative values
-					case "eql":
-						state[operand_left] = 1 if state[operand_left] == operand_right_value else 0
+	for digit, rule in zip(digits, RULES):
+		# print(digit, rule)
+		x = z
+		x %= 26
+		z /= rule[0]
+		x += rule[1]
+		x = 1 if x != digit else 0 # The ternary is not strictly necessary as True is identical to 1
+		z *= 26 if x != digit else 1
+		y = digit + rule[2]
+		y *= x
+		z += y
 
-	return state["z"] == 0
+	return z == 0
 
 
 def get_digits_from_int(integer):
@@ -88,4 +51,21 @@ def get_digits_from_int(integer):
 
 
 if __name__ == "__main__":
+	RULES = (
+		(1, 11, 8),
+		(1, 14, 13),
+		(1, 10, 2),
+		(26, 0, 7),
+		(1,12,11),
+		(1,12,4),
+		(1,12,13),
+		(26,-8,13),
+		(26,-9,10),
+		(1,11,1),
+		(26,0,2),
+		(26,-5,14),
+		(26,-6,6),
+		(26,-12,14)
+	)
+
 	main()
