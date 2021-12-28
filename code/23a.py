@@ -1,14 +1,23 @@
+import copy
+
 from collections import defaultdict
 
 
 def main():
-	positions = parse()
+	amphipods, positions = parse()
+	print(amphipods)
 	print(positions)
+
+	amphipods_copy = get_amphipods_copy(amphipods)
+	amphipods_copy["A"].pop()
+	print(amphipods_copy)
+	print(amphipods)
 
 
 def parse():
+	amphipods = defaultdict(list)
+
 	positions = {
-		"amphipods": defaultdict(list),
 		"hallways": [],
 		"doorways": [],
 		"rooms": [],
@@ -30,7 +39,7 @@ def parse():
 					if character == ".":
 						unsorted_hallways.append(coordinates)
 					else:
-						positions["amphipods"][character].append(coordinates)
+						amphipods[character].append(coordinates)
 						positions["rooms"].append(coordinates)
 
 				x += 1
@@ -47,9 +56,15 @@ def parse():
 		else:
 			positions["hallways"].append(unsorted_hallway_space)
 
-	positions["amphipods"] = dict(positions["amphipods"])
+	amphipods = dict(amphipods)
 
-	return positions
+	return amphipods, positions
+
+
+def get_amphipods_copy(amphipods):
+	amphipods_copy = copy.deepcopy(amphipods)
+
+	return amphipods_copy
 
 
 if __name__ == "__main__":
