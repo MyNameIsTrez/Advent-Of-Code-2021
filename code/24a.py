@@ -20,18 +20,26 @@ def get_maximum_model_number():
 
 
 def is_valid_model_number(model_number):
-	x = y = z = 0
+	x = 0
+	y = 0
+	z = 0
 
 	digits = get_digits_from_int(model_number)
 
 	for digit, rule in zip(digits, RULES):
-		# print(digit, rule)
 		x = z
 		x = x % 26
 		z = z / rule[0]
 		x = x + rule[1]
-		x = 1 if x != digit else 0 # This ternary is not strictly necessary as True is 1
-		z = z * 26 if x != digit else z
+
+		if x != digit:
+			x = 1
+		else:
+			x = 0
+
+		if x != digit:
+			z = z * 26
+			
 		y = digit + rule[2]
 		y = y * x
 		z = z + y
