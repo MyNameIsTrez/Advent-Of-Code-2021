@@ -2,17 +2,21 @@ from collections import defaultdict
 
 
 def main():
-	amphipods, empty_spaces = parse()
-
-	print(amphipods)
-	print(empty_spaces)
+	positions = parse()
+	print(positions)
 
 
 def parse():
-	amphipods = defaultdict(list)
-	empty_spaces = []
+	positions = {
+		"amphipods": defaultdict(list),
+		"hallways": [],
+		"doorways": [],
+		"rooms": [],
+	}
 
-	with open("../inputs/23.txt") as f:
+	unsorted_hallways = []
+
+	with open("../inputs/23_example_1.txt") as f:
 		x = 0
 		y = 0
 
@@ -24,16 +28,28 @@ def parse():
 
 				if character not in "# ":
 					if character == ".":
-						empty_spaces.append(coordinates)
+						unsorted_hallways.append(coordinates)
 					else:
-						amphipods[character].append(coordinates)
+						positions["amphipods"][character].append(coordinates)
+						positions["rooms"].append(coordinates)
 
 				x += 1
 
 			y += 1
 			x = 0
 
-	return dict(amphipods), empty_spaces
+	# Filters out doorways from the unsorted hallways
+	for unsorted_hallway_space in unsorted_hallways:
+		below_unsorted_hallway_space = (unsorted_hallway_space[0], unsorted_hallway_space[1] + 1)
+
+		if below_unsorted_hallway_space in positions["rooms"]:
+			positions["doorways"].append(unsorted_hallway_space)
+		else:
+			positions["hallways"].append(unsorted_hallway_space)
+
+	positions["amphipods"] = dict(positions["amphipods"])
+
+	return positions
 
 
 if __name__ == "__main__":
