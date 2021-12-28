@@ -1,6 +1,3 @@
-import utils
-
-
 def main():
 	model_number = get_maximum_model_number()
 	# model_number = 13579246899999
@@ -13,10 +10,6 @@ def main():
 	print(f"The largest model number accepted by MONAD is {model_number}")
 
 
-def attempt_convert_to_int(string):
-	return int(string) if string.lstrip("-").isdecimal() else string
-
-
 def get_maximum_model_number():
 	"""
 	Submarine model numbers are always fourteen-digit numbers
@@ -27,21 +20,21 @@ def get_maximum_model_number():
 
 
 def is_valid_model_number(model_number):
-	w = x = y = z = 0
+	x = y = z = 0
 
 	digits = get_digits_from_int(model_number)
 
 	for digit, rule in zip(digits, RULES):
 		# print(digit, rule)
 		x = z
-		x %= 26
-		z /= rule[0]
-		x += rule[1]
-		x = 1 if x != digit else 0 # The ternary is not strictly necessary as True is identical to 1
-		z *= 26 if x != digit else 1
+		x = x % 26
+		z = z / rule[0]
+		x = x + rule[1]
+		x = 1 if x != digit else 0 # This ternary is not strictly necessary as True is 1
+		z = z * 26 if x != digit else z
 		y = digit + rule[2]
-		y *= x
-		z += y
+		y = y * x
+		z = z + y
 
 	return z == 0
 
